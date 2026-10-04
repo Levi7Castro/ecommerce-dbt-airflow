@@ -1,0 +1,112 @@
+version: 2
+
+models:
+  - name: silver_clientes
+    description: "Clientes limpos e padronizados (1 linha por cliente)"
+    columns:
+      - name: cliente_id
+        description: "Chave primária do cliente"
+        data_tests:
+          - unique
+          - not_null
+      - name: email
+        description: "Email em minúsculas e sem espaços"
+        data_tests:
+          - valid_email
+      - name: telefone_numeros
+        description: "Telefone apenas com dígitos"
+
+  - name: silver_categorias
+    description: "Categorias de produto (1 linha por categoria)"
+    columns:
+      - name: categoria_id
+        data_tests:
+          - unique
+          - not_null
+
+  - name: silver_produtos
+    description: "Produtos limpos, com preço em numeric (1 linha por produto)"
+    columns:
+      - name: produto_id
+        data_tests:
+          - unique
+          - not_null
+      - name: categoria_id
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('silver_categorias')
+                field: categoria_id
+
+  - name: silver_pedidos
+    description: "Pedidos sem duplicatas (1 linha por pedido)"
+    columns:
+      - name: pedido_id
+        data_tests:
+          - unique
+          - not_null
+      - name: cliente_id
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('silver_clientes')
+                field: cliente_id
+      - name: status_pedido
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: ['pendente', 'concluído', 'cancelado']
+
+  - name: silver_itens_pedidos
+    description: "Itens dos pedidos (1 linha por pedido + produto)"
+    columns:
+      - name: item_pedido_id
+        description: "Chave do item: pedido_id-produto_id"
+        data_tests:
+          - unique
+          - not_null
+      - name: pedido_id
+        data_tests:
+          - relationships:
+              arguments:
+                to: ref('silver_pedidos')
+                field: pedido_id
+      - name: produto_id
+        data_tests:
+          - relationships:
+              arguments:
+                to: ref('silver_produtos')
+                field: produto_id
+
+  - name: silver_pagamentos
+    description: "Pagamentos (1 linha por pagamento; hoje 1 por pedido)"
+    columns:
+      - name: pagamento_id
+        data_tests:
+          - unique
+          - not_null
+      - name: pedido_id
+        description: "Único: a gold assume 1 pagamento por pedido"
+        data_tests:
+          - unique
+          - not_null
+      - name: status_pagamento
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: ['pendente', 'pago', 'recusado']
+
+  - name: silver_avaliacoes
+    description: "Avaliações de produtos"
+    columns:
+      - name: nota
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: [1, 2, 3, 4, 5]
+                quote: false
+
+  - name: silver_carrinho
+    description: "Produtos adicionados ao carrinho"

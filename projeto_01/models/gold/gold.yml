@@ -1,0 +1,39 @@
+version: 2
+
+models:
+  - name: fct_pedidos_vendidos
+    description: >
+      Fato de vendas no grão de item (pedido + produto).
+      Considera venda o pedido com status 'concluído' e pagamento 'pago'.
+      Use valor_venda (subtotal do item) para receita; o valor do pagamento
+      não entra aqui para não se repetir em cada item.
+    columns:
+      - name: item_pedido_id
+        description: "Chave do grão: pedido_id-produto_id"
+        data_tests:
+          - unique
+          - not_null
+      - name: pedido_id
+        data_tests:
+          - not_null
+      - name: cliente_id
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('silver_clientes')
+                field: cliente_id
+      - name: produto_id
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('silver_produtos')
+                field: produto_id
+      - name: nome_categoria
+        data_tests:
+          - not_null
+      - name: valor_venda
+        description: "Receita do item (quantidade x preço unitário)"
+        data_tests:
+          - not_null

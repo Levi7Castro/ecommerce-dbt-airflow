@@ -1,0 +1,32 @@
+# Credenciais e segredos (use .env.example como modelo)
+.env
+.env.*
+!.env.example
+profiles.yml
+!airflow/dbt_profiles/profiles.yml
+.dbt/
+
+# dbt
+target/
+dbt_packages/
+logs/
+.user.yml
+package-lock.yml
+
+# Airflow
+airflow/logs/
+
+# Python
+__pycache__/
+*.py[oc]
+build/
+dist/
+wheels/
+*.egg-info
+.venv
+
+# Sistema (metadados do Windows e macOS)
+*:Zone.Identifier
+*Zone.Identifier
+.DS_Store
+Thumbs.db

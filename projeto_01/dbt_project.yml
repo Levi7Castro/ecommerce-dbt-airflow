@@ -1,0 +1,40 @@
+name: 'projeto_01'
+version: '1.0.0'
+
+profile: 'projeto_01'
+
+model-paths: ["models"]
+analysis-paths: ["analyses"]
+test-paths: ["tests"]
+seed-paths: ["seeds"]
+macro-paths: ["macros"]
+snapshot-paths: ["snapshots"]
+
+clean-targets:
+  - "target"
+  - "dbt_packages"
+
+models:
+  projeto_01:
+
+    bronze:
+      enabled: true
+      materialized: view
+      tags: ['bronze']
+
+    silver:
+      enabled: true
+      schema: silver
+      materialized: table
+      tags: ['silver']
+
+    gold:
+      enabled: true
+      schema: gold
+      materialized: table
+      tags: ['gold']
+
+seeds:
+  projeto_01:
+    schema: bronze_raw
+    tags: ['seeds']
